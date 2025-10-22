@@ -1,0 +1,5 @@
+{
+  "name": "Copy of Copy of Copy of Copy of React Windows 10 Clone",
+  "description": "A functional, real-time clone of the Windows 10 operating system interface built with React, TypeScript, and Tailwind CSS. It features a desktop, taskbar, start menu, and a working windowing system for basic applications.",
+  "requestFramePermissions": []
+}
