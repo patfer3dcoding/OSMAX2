@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { FolderIcon, FileIcon, ChevronLeftIcon, ChevronRightIcon, ReloadIcon, HomeIcon, PlusIcon, CloseIcon, MaxfraWordIcon, MaxfraExcelIcon, MaxfraOutlookIcon, TrashIcon, WhatsAppIcon } from '../components/icons';
 import type { AppProps, FSNode, FileNode, DirectoryNode, FileData, Student } from '../types';
 
@@ -1219,7 +1219,7 @@ export const SandyAiApp: React.FC<Partial<AppProps>> = () => {
     const [error, setError] = useState<string | null>(null);
     const chatContainerRef = useRef<HTMLDivElement>(null);
 
-    const ai = useMemo(() => new GoogleGenAI({ apiKey: process.env.API_KEY as string }), []);
+    const ai = useMemo(() => new GoogleGenerativeAI(process.env.API_KEY as string), []);
 
     useEffect(() => {
         chatContainerRef.current?.scrollTo({ top: chatContainerRef.current.scrollHeight, behavior: 'smooth' });
@@ -1241,15 +1241,16 @@ export const SandyAiApp: React.FC<Partial<AppProps>> = () => {
             }));
             contents.push({ role: 'user', parts: [{ text: input }] });
 
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents,
-                config: {
-                    tools: [{ googleSearch: {} }]
-                }
+            const model = ai.getGenerativeModel({
+                model: 'gemini-2.0-flash-exp',
+                tools: [{ googleSearch: {} }]
             });
 
-            const modelMessage: Message = { role: 'model', text: response.text };
+            const response = await model.generateContent({
+                contents
+            });
+
+            const modelMessage: Message = { role: 'model', text: response.response.text() };
             setMessages(prev => [...prev, modelMessage]);
 
         } catch (err) {
